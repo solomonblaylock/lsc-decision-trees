@@ -5,592 +5,364 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LSC Imaging, Rights, and Licensing Request Workflow</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  background: #f7f7f5;
+  color: #1a1a18;
+  padding: 2rem 1rem;
+}
+h1 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #185FA5;
+  margin-bottom: 2px;
+}
+.subtitle {
+  font-size: 11px;
+  color: #888780;
+  margin-bottom: 1.5rem;
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  padding: 8px 12px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e0dfd8;
+  font-size: 11px;
+  color: #5F5E5A;
+}
+.legend-item { display: flex; align-items: center; gap: 5px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    font-size: 15px;
-    background: #f7f7f5;
-    color: #1a1a18;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-  .container {
-    max-width: 600px;
-    margin: 0 auto;
-  }
+/* Node base styles */
+.node-start { fill: #f1f0ea; stroke: #b4b2a9; }
+.node-question { fill: #e6f1fb; stroke: #378ADD; }
+.node-action { fill: #eaf3de; stroke: #639922; }
+.node-close { fill: #e1f5ee; stroke: #1D9E75; }
+.node-escalate { fill: #faeeda; stroke: #BA7517; }
+.node-refer { fill: #eeedfe; stroke: #7F77DD; }
+.node-info { fill: #faece7; stroke: #D85A30; }
+.node-begin { fill: #e6f1fb; stroke: #185FA5; stroke-width: 2; }
 
-  .page-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #185FA5;
-    margin-bottom: 4px;
-  }
+.node-text {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 11px;
+  fill: #1a1a18;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+.node-text-small {
+  font-size: 10px;
+  fill: #444441;
+}
+.node-label {
+  font-size: 9px;
+  font-weight: 600;
+  fill: #888780;
+  text-anchor: middle;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.node-begin-text {
+  font-size: 11px;
+  font-weight: 600;
+  fill: #042C53;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
 
-  .page-subtitle {
-    font-size: 12px;
-    color: #888780;
-    margin-bottom: 1.5rem;
-  }
-
-  /* Legend */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 1.5rem;
-    padding: 10px 14px;
-    background: #fff;
-    border-radius: 8px;
-    border: 1px solid #e0dfd8;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #5F5E5A;
-  }
-
-  .legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    flex-shrink: 0;
-  }
-
-  /* Progress */
-  .progress {
-    font-size: 11px;
-    color: #888780;
-    text-align: center;
-    margin-bottom: 10px;
-    min-height: 16px;
-  }
-
-  /* Node cards */
-  .node-card {
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-bottom: 6px;
-    border: 1px solid;
-    line-height: 1.55;
-  }
-
-  .node-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    opacity: .7;
-  }
-
-  .node-text {
-    font-size: 14px;
-  }
-
-  /* Node type colors */
-  .node-start {
-    background: #f1f0ea;
-    border-color: #d3d1c7;
-    color: #444441;
-  }
-
-  .node-question {
-    background: #e6f1fb;
-    border-color: #85b7eb;
-    color: #042C53;
-  }
-
-  .node-action {
-    background: #eaf3de;
-    border-color: #97c459;
-    color: #173404;
-  }
-
-  .node-close {
-    background: #e1f5ee;
-    border-color: #5dcaa5;
-    color: #04342C;
-    font-weight: 500;
-  }
-
-  .node-escalate {
-    background: #faeeda;
-    border-color: #ef9f27;
-    color: #412402;
-    font-weight: 500;
-  }
-
-  .node-refer {
-    background: #eeedfe;
-    border-color: #afa9ec;
-    color: #26215C;
-    font-weight: 500;
-  }
-
-  .node-info {
-    background: #faece7;
-    border-color: #f0997b;
-    color: #4A1B0C;
-    font-weight: 500;
-  }
-
-  /* Connector */
-  .connector {
-    display: flex;
-    justify-content: center;
-    margin: 2px 0;
-  }
-
-  .connector-line {
-    width: 2px;
-    height: 14px;
-    background: #b4b2a9;
-  }
-
-  /* Buttons */
-  .btn-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin: 10px 0 4px;
-  }
-
-  .btn {
-    font-size: 13px;
-    font-family: inherit;
-    padding: 7px 16px;
-    border-radius: 6px;
-    border: 1px solid;
-    cursor: pointer;
-    transition: filter .15s;
-    line-height: 1.4;
-    text-align: center;
-  }
-
-  .btn:hover { filter: brightness(.95); }
-  .btn:active { filter: brightness(.9); transform: scale(.98); }
-
-  .btn-yes {
-    background: #e6f1fb;
-    border-color: #85b7eb;
-    color: #042C53;
-  }
-
-  .btn-no {
-    background: #faece7;
-    border-color: #f0997b;
-    color: #4A1B0C;
-  }
-
-  .btn-opt {
-    background: #eeedfe;
-    border-color: #afa9ec;
-    color: #26215C;
-  }
-
-  .btn-continue {
-    background: #eaf3de;
-    border-color: #97c459;
-    color: #173404;
-    display: block;
-    margin: 10px auto 0;
-  }
-
-  .btn-reset {
-    background: #f1f0ea;
-    border-color: #d3d1c7;
-    color: #444441;
-    display: block;
-    margin: 14px auto 0;
-    font-size: 12px;
-    padding: 6px 14px;
-  }
-
-  .btn-back {
-    background: transparent;
-    border-color: #d3d1c7;
-    color: #888780;
-    font-size: 12px;
-    padding: 5px 12px;
-    display: block;
-    margin: 0 0 10px 0;
-  }
-
-  /* Path trail */
-  .trail {
-    font-size: 11px;
-    color: #888780;
-    margin-bottom: 14px;
-    padding: 8px 12px;
-    background: #fff;
-    border-radius: 6px;
-    border: 1px solid #e0dfd8;
-    line-height: 1.6;
-  }
-
-  .trail-label {
-    font-weight: 600;
-    color: #5F5E5A;
-    display: block;
-    margin-bottom: 2px;
-  }
+.connector {
+  stroke: #888780;
+  stroke-width: 1.5;
+  fill: none;
+  marker-end: url(#arrow);
+}
+.connector-label {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 10px;
+  fill: #5F5E5A;
+  text-anchor: middle;
+}
 </style>
 </head>
 <body>
-<div class="container">
 
-  <div class="page-title">LSC Imaging, Rights &amp; Licensing Request Workflow</div>
-  <div class="page-subtitle">UCLA Library Special Collections &mdash; Staff decision guide. Use this tree when a ticket requests permission to use, reproduce, or obtain images of LSC materials.</div>
+<h1>LSC Imaging, Rights &amp; Licensing Request Workflow</h1>
+<div class="subtitle">UCLA Library Special Collections &mdash; Staff reference</div>
 
-  <div class="legend">
-    <div class="legend-item">
-      <div class="legend-dot" style="background:#e6f1fb;border:1px solid #85b7eb"></div>
-      <span>Decision point</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:#e1f5ee;border:1px solid #5dcaa5"></div>
-      <span>Close ticket</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:#faeeda;border:1px solid #ef9f27"></div>
-      <span>Escalate to PSC / AD</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:#eeedfe;border:1px solid #afa9ec"></div>
-      <span>Refer out</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:#eaf3de;border:1px solid #97c459"></div>
-      <span>Take action</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot" style="background:#faece7;border:1px solid #f0997b"></div>
-      <span>Inform patron &amp; close</span>
-    </div>
-  </div>
-
-  <div id="app"></div>
-
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#e6f1fb;border:1px solid #378ADD"></div><span>Decision point</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e1f5ee;border:1px solid #1D9E75"></div><span>Close ticket</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#faeeda;border:1px solid #BA7517"></div><span>Escalate to PSC / AD</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#eeedfe;border:1px solid #7F77DD"></div><span>Refer out</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#eaf3de;border:1px solid #639922"></div><span>Action / workflow</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:#faece7;border:1px solid #D85A30"></div><span>Inform &amp; close</span></div>
 </div>
 
-<script>
-const nodes = {
+<svg viewBox="0 0 900 1380" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+    <path d="M0,0 L0,6 L8,3 z" fill="#888780"/>
+  </marker>
+</defs>
 
-  start: {
-    type: 'start',
-    text: 'Incoming ticket: patron requests permission to use or reproduce an item, needs licensing support, imaging services, or help identifying a rights holder.',
-    next: 'q1'
-  },
+<!-- ═══════════════════════════════════════════════
+     START
+═══════════════════════════════════════════════ -->
+<rect x="250" y="20" width="400" height="54" rx="8" class="node-start"/>
+<text class="node-text" x="450" y="40"><tspan x="450" dy="0">Incoming LibAnswers ticket requesting user permission,</tspan></text>
+<text class="node-text" x="450" y="56"><tspan x="450" dy="0">licensing support, and/or rights research assistance</tspan></text>
 
-  q1: {
-    type: 'question',
-    label: 'Step 1 — Identify the item',
-    text: 'Does the ticket include enough information to identify the specific item or asset in question (e.g., catalog link, call number, collection/box/folder)?',
-    choices: [
-      { label: 'Yes — item is identified', next: 'q2' },
-      { label: 'No — item not identified', next: 'clarify_macro' }
-    ]
-  },
+<!-- START → Q1 -->
+<line x1="450" y1="74" x2="450" y2="102" class="connector"/>
 
-  clarify_macro: {
-    type: 'action',
-    text: 'Send clarifying macro: ask the patron to provide the catalog link, call number, or collection/box/folder reference for the item they are asking about. Submit ticket as Open and leave it for patron reply.',
-    next: 'q1_return'
-  },
+<!-- ═══════════════════════════════════════════════
+     Q1 — Identify item
+═══════════════════════════════════════════════ -->
+<rect x="230" y="104" width="440" height="56" rx="8" class="node-question"/>
+<text class="node-label" x="450" y="118">Step 1</text>
+<text class="node-text" x="450" y="134"><tspan x="450" dy="0">Does the ticket include the relevant information needed</tspan></text>
+<text class="node-text" x="450" y="148"><tspan x="450" dy="0">to identify the item/asset in question?</tspan></text>
 
-  q1_return: {
-    type: 'question',
-    label: 'When patron replies',
-    text: 'Has the patron now provided identifying information?',
-    choices: [
-      { label: 'Yes', next: 'q2' },
-      { label: 'No response after 2 weeks', next: 'close_no_response' }
-    ]
-  },
+<!-- Q1 → Yes → Q2 -->
+<line x1="450" y1="160" x2="450" y2="188" class="connector"/>
+<text class="connector-label" x="462" y="178">Yes</text>
 
-  close_no_response: {
-    type: 'close',
-    text: 'Close ticket. No response from patron after follow-up. Note in ticket that it was closed due to non-response. Patron may reopen by replying.'
-  },
+<!-- Q1 → No → Clarify macro (left) -->
+<line x1="230" y1="132" x2="110" y2="132" class="connector" marker-end="none" stroke="#888780" stroke-width="1.5"/>
+<line x1="110" y1="132" x2="110" y2="218" class="connector"/>
+<text class="connector-label" x="168" y="125">No</text>
 
-  q2: {
-    type: 'question',
-    label: 'Step 2 — Is this an LSC item?',
-    text: 'Is the item held by UCLA Library Special Collections?',
-    choices: [
-      { label: 'Yes — LSC item or collection', next: 'q3' },
-      { label: 'No — held by another UCLA unit or outside institution', next: 'refer_other_unit' }
-    ]
-  },
+<!-- CLARIFY MACRO (left side) -->
+<rect x="20" y="218" width="180" height="68" rx="8" class="node-action"/>
+<text class="node-text node-text-small" x="110" y="236">Send macro: clarify your</text>
+<text class="node-text node-text-small" x="110" y="250">request, refer to researcher</text>
+<text class="node-text node-text-small" x="110" y="264">list, link to FAQ about</text>
+<text class="node-text node-text-small" x="110" y="278">permission and licensing</text>
 
-  refer_other_unit: {
-    type: 'refer',
-    text: 'Refer the patron to the appropriate institution or UCLA unit (MEAP, IDEP, DLP, or other collection in OAC/UC Search). Use referral macro if one exists. Close ticket.'
-  },
+<!-- Clarify → loop back to Q1 (arrow up and right) -->
+<path d="M 200 252 Q 228 252 228 132 L 230 132" class="connector" fill="none"/>
+<text class="connector-label" x="222" y="198">Patron replies</text>
 
-  q3: {
-    type: 'question',
-    label: 'Step 3 — What does the patron need?',
-    text: 'What is the nature of this request? (Choose the best match.)',
-    choices: [
-      { label: 'Imaging only — patron needs a scan or digital copy', next: 'q_imaging' },
-      { label: 'Use / permission — patron wants to reproduce or publish', next: 'q_rights_collection' },
-      { label: 'Rights research — patron needs to identify the rights holder', next: 'q_rights_research' },
-      { label: 'Not yet clear', next: 'clarify_macro' }
-    ]
-  },
+<!-- ═══════════════════════════════════════════════
+     Q2 — LSC item?
+═══════════════════════════════════════════════ -->
+<rect x="230" y="190" width="440" height="56" rx="8" class="node-question"/>
+<text class="node-label" x="450" y="204">Step 2</text>
+<text class="node-text" x="450" y="220"><tspan x="450" dy="0">Is this a UCLA Library Special Collections</tspan></text>
+<text class="node-text" x="450" y="234"><tspan x="450" dy="0">item/collection?</tspan></text>
 
-  /* ── IMAGING BRANCH ── */
+<!-- Q2 → Yes → Q3 -->
+<line x1="450" y1="246" x2="450" y2="274" class="connector"/>
+<text class="connector-label" x="462" y="264">Yes</text>
 
-  q_imaging: {
-    type: 'question',
-    label: 'Imaging branch',
-    text: 'What kind of imaging does the patron need?',
-    choices: [
-      { label: 'Low-res, research / review copy (~100 pages or fewer)', next: 'edelivery' },
-      { label: 'High-res / production quality (publication, exhibition, etc.)', next: 'q_imaging_hi' },
-      { label: 'Audiovisual material (film, audio, video)', next: 'av_workflow' }
-    ]
-  },
+<!-- Q2 → No → Refer other unit (right) -->
+<line x1="670" y1="218" x2="790" y2="218" class="connector" marker-end="none" stroke="#888780" stroke-width="1.5"/>
+<line x1="790" y1="218" x2="790" y2="238" class="connector"/>
+<text class="connector-label" x="730" y="211">No</text>
 
-  edelivery: {
-    type: 'action',
-    text: 'Route to eDelivery workflow. Tag LSC eDelivery. Assign to eDelivery Coordinator. Note: eDelivery is for research / review copies only — low-res, up to ~100 pages. If patron also states intent to publish, see Use/Permission branch. Close this branch when files are delivered to patron.',
-    next: null
-  },
+<!-- REFER OTHER UNIT (right side) -->
+<rect x="700" y="238" width="180" height="68" rx="8" class="node-refer"/>
+<text class="node-text node-text-small" x="790" y="256">Macro: MEAP/IDEP,</text>
+<text class="node-text node-text-small" x="790" y="270">Other DLP Collection,</text>
+<text class="node-text node-text-small" x="790" y="284">other Collection in OAC.</text>
+<text class="node-text node-text-small" x="790" y="298">Close ticket.</text>
 
-  q_imaging_hi: {
-    type: 'question',
-    label: 'High-res imaging',
-    text: 'Does this request also involve a use or permission question — i.e., does the patron state intent to publish, exhibit, or use the image commercially?',
-    choices: [
-      { label: 'No — patron just needs the scan', next: 'imaging_only' },
-      { label: 'Yes — patron also needs permission to use', next: 'q_rights_collection' }
-    ]
-  },
+<!-- ═══════════════════════════════════════════════
+     Q3 — What does patron need?
+═══════════════════════════════════════════════ -->
+<rect x="230" y="276" width="440" height="56" rx="8" class="node-question"/>
+<text class="node-label" x="450" y="290">Step 3</text>
+<text class="node-text" x="450" y="306"><tspan x="450" dy="0">Does the ticket include the relevant information needed</tspan></text>
+<text class="node-text" x="450" y="320"><tspan x="450" dy="0">to identify/make actionable next steps?</tspan></text>
 
-  imaging_only: {
-    type: 'action',
-    text: 'Process as production imaging / LSC Duplication request. Tag LSC Duplication. Quote patron per current fee schedule. Route to Duplication Coordinator. Close when files are delivered.',
-    next: null
-  },
+<!-- Q3 → Imaging (left branch) -->
+<line x1="310" y1="332" x2="180" y2="332" class="connector" marker-end="none" stroke="#888780" stroke-width="1.5"/>
+<line x1="180" y1="332" x2="180" y2="386" class="connector"/>
+<text class="connector-label" x="240" y="323">Yes — imaging</text>
 
-  av_workflow: {
-    type: 'action',
-    text: 'Route to A/V workflow. Tag LSC AV.\n\n• Born-digital materials → forward to Digital Archivist.\n• Standard A/V orders → use "AV duplication - How to submit request" macro; route to A/V Coordinator.\n• Large orders → outsourced to external vendor; A/V Coordinator manages.\n\nDo not close ticket until patron has received their files.',
-    next: null
-  },
+<!-- Q3 → Use/Permission (center) -->
+<line x1="450" y1="332" x2="450" y2="386" class="connector"/>
+<text class="connector-label" x="490" y="360">Yes — use/</text>
+<text class="connector-label" x="490" y="372">permission</text>
 
-  /* ── USE / PERMISSION BRANCH ── */
+<!-- Q3 → Rights research (right branch) -->
+<line x1="590" y1="332" x2="720" y2="332" class="connector" marker-end="none" stroke="#888780" stroke-width="1.5"/>
+<line x1="720" y1="332" x2="720" y2="386" class="connector"/>
+<text class="connector-label" x="660" y="323">Yes — rights</text>
+<text class="connector-label" x="660" y="333">research</text>
 
-  q_rights_collection: {
-    type: 'question',
-    label: 'Use / permission branch',
-    text: 'Which collection does this item come from?',
-    choices: [
-      { label: 'LA Times or LA Daily News Photographic Archive', next: 'cc_macro' },
-      { label: 'Barbara Morgan Photographs and Papers (Coll. 2278)', next: 'morgan_macro' },
-      { label: 'Another LSC collection', next: 'q_rights_lsc' }
-    ]
-  },
+<!-- Q3 → No → Clarify macro (arrow left and up) -->
+<line x1="230" y1="304" x2="200" y2="304" class="connector" marker-end="none" stroke="#888780" stroke-width="1.5"/>
+<line x1="200" y1="252" x2="200" y2="304" class="connector" marker-end="none" stroke="#888780" stroke-width="1.5"/>
+<path d="M 200 252 L 200 286" class="connector" fill="none"/>
+<text class="connector-label" x="212" y="280">No →</text>
+<text class="connector-label" x="212" y="290">clarify</text>
 
-  cc_macro: {
-    type: 'close',
-    text: 'LA Times / LA Daily News images are covered under a Creative Commons Attribution 4.0 International License. The patron may use the image freely as long as they credit LSC.\n\nCredit line: "Los Angeles Times Photographic Archive, UCLA Library Special Collections."\n\nSend the LA Times / LA Daily News macro. No fee. No formal agreement needed. Close ticket.'
-  },
+<!-- ═══════════════════════════════════════════════
+     IMAGING BRANCH (left column, x≈180)
+═══════════════════════════════════════════════ -->
+<rect x="80" y="388" width="200" height="38" rx="8" class="node-begin"/>
+<text class="node-begin-text" x="180" y="407">Begin Workflow:</text>
+<text class="node-begin-text" x="180" y="420">Request for imaging services</text>
 
-  morgan_macro: {
-    type: 'action',
-    text: 'LSC holds copyright to Barbara Morgan\'s work. Informal email permission is sufficient — LSC does not issue or sign formal licensing agreements.\n\nSend the Barbara Morgan (Use) macro confirming permission for the stated use. Note any applicable fee if a high-res scan is also needed (route that part to Duplication). Close when resolved.',
-    next: null
-  },
+<!-- Imaging → eDelivery -->
+<line x1="130" y1="426" x2="130" y2="454" class="connector"/>
+<text class="connector-label" x="90" y="443">Low-res /</text>
+<text class="connector-label" x="90" y="453">eDelivery</text>
 
-  q_rights_lsc: {
-    type: 'question',
-    label: 'Rights determination',
-    text: 'Does UCLA / LSC hold the intellectual property rights to this item or collection?\n\nCheck the "Terms of Access and Use" or "Conditions Governing Use" section of the finding aid first.',
-    choices: [
-      { label: 'Yes — UCLA / LSC holds rights', next: 'uc_owns' },
-      { label: 'No — LSC does not hold copyright', next: 'no_copyright' },
-      { label: 'Unsure after checking finding aid', next: 'escalate_psc' }
-    ]
-  },
+<!-- Imaging → Production -->
+<line x1="230" y1="426" x2="230" y2="454" class="connector"/>
+<text class="connector-label" x="265" y="443">High-res /</text>
+<text class="connector-label" x="265" y="453">production</text>
 
-  uc_owns: {
-    type: 'action',
-    text: 'LSC can grant informal email permission for the stated use.\n\nRespond confirming permission. Make clear in your reply that:\n• LSC does not issue or sign formal licensing agreements\n• This email constitutes LSC\'s permission for the stated use\n• The patron proceeds at their own discretion for any third-party rights that may apply\n\nIf the patron also needs a high-res scan, route that to the Duplication workflow. Close when resolved.',
-    next: null
-  },
+<rect x="60" y="456" width="140" height="38" rx="8" class="node-action"/>
+<text class="node-text node-text-small" x="130" y="470">Route to eDelivery</text>
+<text class="node-text node-text-small" x="130" y="484">workflow</text>
 
-  no_copyright: {
-    type: 'info',
-    text: 'LSC holds the physical item but not the intellectual property rights.\n\nSend the "Licensing - LSC does not have copyright" macro. Explain that the patron must seek permission from the rights holder, or assess their own risk if the work may be an orphan work.\n\nLSC cannot grant permission, issue a license, or sign any agreement in this case. Close ticket — no further action needed from LSC.'
-  },
+<rect x="160" y="456" width="140" height="38" rx="8" class="node-action"/>
+<text class="node-text node-text-small" x="230" y="470">Route to production</text>
+<text class="node-text node-text-small" x="230" y="484">imaging workflow</text>
 
-  escalate_psc: {
-    type: 'escalate',
-    text: 'Rights status is unclear after checking the finding aid. This is a complex case.\n\nEscalate to Public Services Coordinator for consultation with the Assistant Director.\n\nBefore escalating, add an internal note to the ticket summarizing:\n• Item identified (include call number / catalog link)\n• Finding aid checked (note what it says, or that it is silent)\n• Why rights status remains unresolved\n\nDo not close the ticket. Do not respond to the patron yet. Public Services Coordinator will advise on next steps.'
-  },
+<!-- ═══════════════════════════════════════════════
+     USE / PERMISSION BRANCH (center, x≈450)
+═══════════════════════════════════════════════ -->
+<rect x="310" y="388" width="280" height="38" rx="8" class="node-begin"/>
+<text class="node-begin-text" x="450" y="401">Begin Workflow: Request for</text>
+<text class="node-begin-text" x="450" y="416">Permission for Use or License</text>
 
-  /* ── RIGHTS RESEARCH BRANCH ── */
+<!-- Begin → collection check -->
+<line x1="450" y1="426" x2="450" y2="454" class="connector"/>
 
-  q_rights_research: {
-    type: 'question',
-    label: 'Rights research branch',
-    text: 'The patron needs to identify who currently holds the rights to this item (estate, heir, successor, etc.).\n\nFirst: check the "Terms of Access and Use" or "Conditions Governing Use" section of the finding aid.',
-    choices: [
-      { label: 'Finding aid identifies the rights holder or estate', next: 'refer_rights_holder' },
-      { label: 'Finding aid is silent or the information is outdated / incomplete', next: 'escalate_psc' }
-    ]
-  },
+<rect x="310" y="456" width="280" height="52" rx="8" class="node-question"/>
+<text class="node-text" x="450" y="470">Is the use/licensing request for these collections?</text>
+<text class="node-text node-text-small" x="450" y="485">• Barbara Morgan Photographs and Papers (LSC:2278)</text>
+<text class="node-text node-text-small" x="450" y="498">• Los Angeles Times Photographic Archive (LSC:1429)</text>
 
-  refer_rights_holder: {
-    type: 'refer',
-    text: 'Share the rights holder information from the finding aid with the patron. Advise them to contact the rights holder or estate directly to request permission.\n\nLSC cannot facilitate this contact, negotiate on the patron\'s behalf, or provide contact information beyond what is in the finding aid.\n\nClose ticket.'
-  }
+<!-- Collection → LA Times (left) -->
+<line x1="350" y1="508" x2="350" y2="536" class="connector"/>
+<text class="connector-label" x="310" y="524">LA Times /</text>
+<text class="connector-label" x="310" y="534">LA Daily News</text>
 
-};
+<!-- Collection → Morgan (center-left) -->
+<line x1="430" y1="508" x2="430" y2="536" class="connector"/>
+<text class="connector-label" x="430" y="524">Morgan</text>
 
-let history = [];
-let trailLabels = [];
-let current = 'start';
+<!-- Collection → No → rights determination -->
+<line x1="560" y1="482" x2="610" y2="482" class="connector" marker-end="none" stroke="#888780" stroke-width="1.5"/>
+<line x1="610" y1="482" x2="610" y2="536" class="connector"/>
+<text class="connector-label" x="588" y="474">No</text>
 
-function typeClass(type) {
-  const map = {
-    start: 'node-start',
-    question: 'node-question',
-    action: 'node-action',
-    close: 'node-close',
-    escalate: 'node-escalate',
-    refer: 'node-refer',
-    info: 'node-info'
-  };
-  return map[type] || 'node-start';
-}
+<!-- LA TIMES CLOSE -->
+<rect x="290" y="538" width="130" height="58" rx="8" class="node-close"/>
+<text class="node-text node-text-small" x="355" y="554">Macro: LA Times (Use).</text>
+<text class="node-text node-text-small" x="355" y="567">CC Attribution 4.0.</text>
+<text class="node-text node-text-small" x="355" y="580">Free with credit line.</text>
+<text class="node-text node-text-small" x="355" y="593">Close ticket.</text>
 
-function render(nodeId) {
-  const node = nodes[nodeId];
-  const app = document.getElementById('app');
-  app.innerHTML = '';
+<!-- MORGAN ACTION -->
+<rect x="378" y="538" width="110" height="58" rx="8" class="node-action"/>
+<text class="node-text node-text-small" x="433" y="554">Macro: Morgan</text>
+<text class="node-text node-text-small" x="433" y="567">(Use). LSC holds</text>
+<text class="node-text node-text-small" x="433" y="580">copyright. Informal</text>
+<text class="node-text node-text-small" x="433" y="593">email permission.</text>
 
-  if (history.length > 0) {
-    const back = document.createElement('button');
-    back.className = 'btn btn-back';
-    back.textContent = '← Back';
-    back.onclick = () => {
-      current = history.pop();
-      trailLabels.pop();
-      render(current);
-    };
-    app.appendChild(back);
-  }
+<!-- RIGHTS DETERMINATION BOX -->
+<rect x="548" y="538" width="130" height="52" rx="8" class="node-question"/>
+<text class="node-text node-text-small" x="613" y="554">Does UCLA LSC hold</text>
+<text class="node-text node-text-small" x="613" y="567">the rights to this asset/</text>
+<text class="node-text node-text-small" x="613" y="580">item/collection?</text>
 
-  if (trailLabels.length > 0) {
-    const trail = document.createElement('div');
-    trail.className = 'trail';
-    const lbl = document.createElement('span');
-    lbl.className = 'trail-label';
-    lbl.textContent = 'Path taken:';
-    trail.appendChild(lbl);
-    trail.appendChild(document.createTextNode(trailLabels.join(' → ')));
-    app.appendChild(trail);
-  }
+<!-- Rights → Yes -->
+<line x1="568" y1="590" x2="548" y2="638" class="connector"/>
+<text class="connector-label" x="538" y="616">Yes</text>
 
-  if (history.length > 0) {
-    const prog = document.createElement('div');
-    prog.className = 'progress';
-    prog.textContent = 'Step ' + history.length;
-    app.appendChild(prog);
-  }
+<!-- Rights → No -->
+<line x1="613" y1="590" x2="613" y2="638" class="connector"/>
+<text class="connector-label" x="630" y="616">No</text>
 
-  const card = document.createElement('div');
-  card.className = 'node-card ' + typeClass(node.type);
+<!-- Rights → Unsure -->
+<line x1="658" y1="590" x2="678" y2="638" class="connector"/>
+<text class="connector-label" x="686" y="616">Unsure</text>
 
-  if (node.label) {
-    const lbl = document.createElement('div');
-    lbl.className = 'node-label';
-    lbl.textContent = node.label;
-    card.appendChild(lbl);
-  }
+<!-- UC OWNS -->
+<rect x="468" y="640" width="140" height="68" rx="8" class="node-action"/>
+<text class="node-text node-text-small" x="538" y="656">Macro: Use request</text>
+<text class="node-text node-text-small" x="538" y="669">(UC owns rights).</text>
+<text class="node-text node-text-small" x="538" y="682">Informal email</text>
+<text class="node-text node-text-small" x="538" y="695">permission. No formal</text>
+<text class="node-text node-text-small" x="538" y="708">agreement issued.</text>
 
-  const txt = document.createElement('div');
-  txt.className = 'node-text';
-  txt.style.whiteSpace = 'pre-line';
-  txt.textContent = node.text;
-  card.appendChild(txt);
-  app.appendChild(card);
+<!-- NO COPYRIGHT -->
+<rect x="558" y="640" width="130" height="68" rx="8" class="node-info"/>
+<text class="node-text node-text-small" x="623" y="656">Macro: UCLA does</text>
+<text class="node-text node-text-small" x="623" y="669">not hold rights.</text>
+<text class="node-text node-text-small" x="623" y="682">Patron must seek</text>
+<text class="node-text node-text-small" x="623" y="695">rights holder or</text>
+<text class="node-text node-text-small" x="623" y="708">assess own risk.</text>
 
-  if (node.choices && node.choices.length > 0) {
-    const conn = document.createElement('div');
-    conn.className = 'connector';
-    const line = document.createElement('div');
-    line.className = 'connector-line';
-    conn.appendChild(line);
-    app.appendChild(conn);
+<!-- ESCALATE -->
+<rect x="640" y="640" width="148" height="68" rx="8" class="node-escalate"/>
+<text class="node-text node-text-small" x="714" y="656">Escalate to Public</text>
+<text class="node-text node-text-small" x="714" y="669">Services Coordinator</text>
+<text class="node-text node-text-small" x="714" y="682">for consultation with</text>
+<text class="node-text node-text-small" x="714" y="695">Assistant Director.</text>
+<text class="node-text node-text-small" x="714" y="708">Add internal note.</text>
 
-    const btnRow = document.createElement('div');
-    btnRow.className = 'btn-row';
+<!-- ═══════════════════════════════════════════════
+     RIGHTS RESEARCH BRANCH (right, x≈720)
+═══════════════════════════════════════════════ -->
+<!-- Note: shares escalate box with rights branch above -->
+<!-- We'll place rights research begin below x=760 -->
 
-    node.choices.forEach((c, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'btn ' + (i === 0 ? 'btn-yes' : i === 1 && node.choices.length === 2 ? 'btn-no' : 'btn-opt');
-      btn.textContent = c.label;
-      btn.onclick = () => {
-        history.push(nodeId);
-        trailLabels.push(c.label);
-        current = c.next;
-        render(c.next);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      };
-      btnRow.appendChild(btn);
-    });
+<!-- Q3 rights research line comes in at x=720 -->
+<rect x="630" y="388" width="180" height="38" rx="8" class="node-begin"/>
+<text class="node-begin-text" x="720" y="401">Begin Workflow: Request</text>
+<text class="node-begin-text" x="720" y="416">for rights research assistance</text>
 
-    app.appendChild(btnRow);
-  }
+<!-- Rights research → finding aid check -->
+<line x1="720" y1="426" x2="720" y2="454" class="connector"/>
 
-  if (node.next) {
-    const conn = document.createElement('div');
-    conn.className = 'connector';
-    const line = document.createElement('div');
-    line.className = 'connector-line';
-    conn.appendChild(line);
-    app.appendChild(conn);
+<rect x="630" y="456" width="180" height="52" rx="8" class="node-question"/>
+<text class="node-text node-text-small" x="720" y="472">Check "Terms of Access and Use"</text>
+<text class="node-text node-text-small" x="720" y="485">or "Conditions Governing Use"</text>
+<text class="node-text node-text-small" x="720" y="498">section of the finding aid.</text>
 
-    const cont = document.createElement('button');
-    cont.className = 'btn btn-continue';
-    cont.textContent = 'Continue →';
-    cont.onclick = () => {
-      history.push(nodeId);
-      trailLabels.push('Continue');
-      current = node.next;
-      render(node.next);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-    app.appendChild(cont);
-  }
+<!-- Finding aid → identifies rights holder -->
+<line x1="680" y1="508" x2="660" y2="536" class="connector"/>
+<text class="connector-label" x="645" y="522">Identifies</text>
+<text class="connector-label" x="645" y="532">rights holder</text>
 
-  if (!node.choices && !node.next) {
-    const reset = document.createElement('button');
-    reset.className = 'btn btn-reset';
-    reset.textContent = '↩ Start over';
-    reset.onclick = () => {
-      history = [];
-      trailLabels = [];
-      current = 'start';
-      render('start');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-    app.appendChild(reset);
-  }
-}
+<!-- Finding aid → silent → escalate -->
+<line x1="760" y1="508" x2="780" y2="536" class="connector"/>
+<text class="connector-label" x="800" y="520">Silent /</text>
+<text class="connector-label" x="800" y="530">incomplete</text>
 
-render('start');
-</script>
+<!-- REFER RIGHTS HOLDER -->
+<rect x="580" y="538" width="148" height="68" rx="8" class="node-refer"/>
+<text class="node-text node-text-small" x="654" y="554">Share rights holder</text>
+<text class="node-text node-text-small" x="654" y="567">info from finding aid.</text>
+<text class="node-text node-text-small" x="654" y="580">Advise patron to</text>
+<text class="node-text node-text-small" x="654" y="593">contact directly.</text>
+<text class="node-text node-text-small" x="654" y="606">Close ticket.</text>
+
+<!-- Silent → Escalate (reuse same escalate box, draw line down-right) -->
+<line x1="790" y1="536" x2="790" y2="610" class="connector" marker-end="none" stroke="#888780" stroke-width="1.5"/>
+<line x1="790" y1="610" x2="714" y2="638" class="connector"/>
+
+</svg>
+
 </body>
 </html>
